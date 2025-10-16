@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html style="opacity: 1;" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+   <meta charset="utf-8" /><!-- utf-8 works for most cases -->
+   <meta content="width=device-width" name="viewport" /><!-- Forcing initial-scale shouldn't be necessary -->
+   <meta content="IE=edge" http-equiv="X-UA-Compatible" /><!-- Use the latest (edge) version of IE rendering engine -->
+   <meta name="x-apple-disable-message-reformatting" /><!-- Disable auto-scale in iOS 10 Mail entirely -->
+   <title>Event TinkerBellGarden</title>
+   <!-- The title tag shows in email notifications, like Android 4.4. --><!-- Web Font / @font-face : BEGIN --><!-- NOTE: If web fonts are not required, lines 10 - 27 can be safely removed. --><!-- Desktop Outlook chokes on web font references and defaults to Times New Roman, so we force a safe fallback font. --><!--[if mso]>
+<style>
+* {
+font-family: sans-serif !important;
+}
+</style>
+<![endif]--><!-- All other clients get the webfont reference; some will render the font and others will silently fail to the fallbacks. More on that here: http://stylecampaign.com/blog/2015/02/webfont-support-in-email/ --><!--[if !mso]><!--><!-- insert web font reference, eg: <link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'> --><!--<![endif]--><!-- Web Font / @font-face : END --><!-- CSS Reset -->
+   <style type="text/css">/* What it does: Remove spaces around the email design added by some email clients. */
+      /* Beware: It can remove the padding / margin and add a background color to the compose a reply window. */
+      html,
+      body {
+        margin: 0 auto !important;
+        padding: 0 !important;
+        height: 100% !important;
+        width: 100% !important;
+      }
+      /* What it does: Stops email clients resizing small text. */
+      * {
+        -ms-text-size-adjust: 100%;
+        -webkit-text-size-adjust: 100%;
+      }
+      /* What is does: Centers email on Android 4.4 */
+      div[style*="margin: 16px 0"] {
+        margin:0 !important;
+      }
+      /* What it does: Stops Outlook from adding extra spacing to tables. */
+      table,
+      td {
+        mso-table-lspace: 0pt !important;
+        mso-table-rspace: 0pt !important;
+      }
+      /* What it does: Fixes webkit padding issue. Fix for Yahoo mail table alignment bug. Applies table-layout to the first 2 tables then removes for anything nested deeper. */
+      table {
+        border-spacing: 0 !important;
+        border-collapse: collapse !important;
+        table-layout: fixed !important;
+        margin: 0 auto !important;
+      }
+      table table table {
+        table-layout: auto;
+      }
+      /* What it does: Uses a better rendering method when resizing images in IE. */
+      img {
+        -ms-interpolation-mode:bicubic;
+      }
+      /* What it does: A work-around for iOS meddling in triggered links. */
+      *[x-apple-data-detectors] {
+        color: inherit !important;
+        text-decoration: none !important;
+      }
+      /* What it does: A work-around for Gmail meddling in triggered links. */
+      .x-gmail-data-detectors,
+      .x-gmail-data-detectors *,
+      .aBn {
+        border-bottom: 0 !important;
+        cursor: default !important;
+      }
+      /* What it does: Prevents Gmail from displaying an download button on large, non-linked images. */
+      .a6S {
+        display: none !important;
+        opacity: 0.01 !important;
+      }
+      /* If the above doesn't work, add a .g-img class to any image in question. */
+      img.g-img + div {
+        display:none !important;
+      }
+      /* What it does: Prevents underlining the button text in Windows 10 */
+      .button-link {
+        text-decoration: none !important;
+      }
+      /* What it does: Removes right gutter in Gmail iOS app: https://github.com/TedGoas/Cerberus/issues/89  */
+      /* Create one of these media queries for each additional viewport size you'd like to fix */
+      /* Thanks to Eric Lepetit @ericlepetitsf) for help troubleshooting */
+      @media only screen and (min-device-width: 375px) and (max-device-width: 413px) {
+        /* iPhone 6 and 6+ */
+        .email-container {
+          min-width: 375px !important;
+        }
+      }
+   </style>
+   <!-- Progressive Enhancements -->
+   <style type="text/css">/* What it does: Hover styles for buttons */
+      /* What it does: Hover styles for buttons */
+        .button-td,
+        .button-a {
+            transition: all 100ms ease-in;
+        }
+        .button-td:hover,
+        .button-a:hover {
+            background: #002d5b !important;
+            border-color: #002d5b !important;
+        }
+      /* Media Queries */
+      @media screen and (max-width: 600px) {
+        .email-container {
+          width: 100% !important;
+          margin: auto !important;
+        }
+        /* What it does: Forces elements to resize to the full width of their container. Useful for resizing images beyond their max-width. */
+        .fluid {
+          max-width: 100% !important;
+          height: auto !important;
+          margin-left: auto !important;
+          margin-right: auto !important;
+        }
+        /* What it does: Forces table cells into full-width rows. */
+        .stack-column,
+        .stack-column-center {
+          display: block !important;
+          width: 100% !important;
+          max-width: 100% !important;
+          direction: ltr !important;
+        }
+        /* And center justify these ones. */
+        .stack-column-center {
+          text-align: center !important;
+        }
+        /* What it does: Generic utility class for centering. Useful for images, buttons, and nested tables. */
+        .center-on-narrow {
+          text-align: center !important;
+          display: block !important;
+          margin-left: auto !important;
+          margin-right: auto !important;
+          float: none !important;
+        }
+        table.center-on-narrow {
+          display: inline-block !important;
+        }
+      }
+   </style>
+   <style type="text/css">
+	   
+      @media screen and (max-width: 600px) {
+        .mobile_text{
+          padding: 15px!important;
+        }
+      }
+   </style>
+   
+   <!--[if mso]>
+	<style type="text/css">
+	body, table, td {font-family: Arial, Helvetica, sans-serif !important;}
+	</style>
+	<![endif]-->
+   
+</head>
+<body bgcolor="#FFFFFF" style="margin: 0px;" width="100%">
+<center style="width: 100%; background: #FFFFFF; text-align: left;"><!-- Visually Hidden Preheader Text : BEGIN -->
+<div style="display:none;font-size:1px;line-height:1px;max-height:0px;max-width:0px;opacity:0;overflow:hidden;mso-hide:all;font-family: sans-serif;">
+</div>
+<!-- Visually Hidden Preheader Text : END --><!-- Email Body : BEGIN -->
+
+<table align="center" aria-hidden="true" border="0" cellpadding="0" cellspacing="0" class="email-container" role="presentation" style="margin: auto;" width="600">
+   <tbody>
+      <tr>
+         <td align="center"><a href="##"><img align="center" alt="" border="0" class="g-img" src="https://smokymountaingames.org/lib/image/thumbs/KidEvent4_1632_1224_fill.jpg" style="object-fit:contain ;width: 100%; max-width: 600px; height: 400px; font-family: 'Open Sans', Arial, sans-serif;font-size: 25px;line-height: 30px;color: #135aff; font-weight: bold;" width="600" /></a></td>
+      </tr>
+	  <tr>
+		  <td class="mobile_text" bgcolor="#f0ff8f" style="padding:30px 70px 0 70px; text-align: center; font-family:'Open Sans', sans-serif; font-size: 32px; line-height: 38px; color: #0d9165; font-weight: 100;"><strong>TinkerBellGarden will have a new event!!</strong></td>
+	  </tr>
+	  <tr>
+		  <td class="mobile_text" bgcolor="#f0ff8f" style="padding:10px 60px 0 60px; text-align: center; font-family:'Open Sans', sans-serif; font-size: 16px; line-height: 24px; color: #272727; font-weight: 100;">
+            Our Garden is ready to make your family days out in Hanoi exciting, energetic and fun! Book tickets and you can have <strong><%= discount %>% discount</strong> Prepare to have an unforgetable events with your children right now!   
+		  </td>
+	  </tr>
+	  <tr>
+		  <td class="mobile_text" bgcolor="#f0ff8f" style="padding:30px 100px 50px 100px; text-align: center; font-family:'Open Sans', sans-serif; font-size: 15px; line-height: 26px; color: #002d5b; font-weight: 100;">
+			<!-- Button : Begin -->
+				<table align="center" aria-hidden="true" border="0" cellpadding="0" cellspacing="0" role="presentation" style="margin: auto">
+					<tbody>
+					  <tr>
+						<td class="button-td" style="border-radius: 3px; background: #0d9165; text-align: center;"><a class="button-a" href="https://tinkerbellgarden-e3b0c.web.app/events" style="background: #0d9165; border-top: 15px solid #0d9165; border-bottom: 15px solid #0d9165; border-left: 35px solid #0d9165; border-right: 35px solid #0d9165; font-family: 'Open Sans', sans-serif; font-size: 18px; line-height: 1; text-align: center; text-decoration: none; display: block; border-radius: 3px; font-weight: 100;"><span style="color:#ffffff;">Book Tickets</span></a>
+						</td>
+					  </tr>
+					</tbody>
+				</table>
+			<!-- Button : END -->
+		  </td>
+      </tr>
+      
+	 
+</table>
+<!-- Email Footer : END --></center>
+</body>
+</html>

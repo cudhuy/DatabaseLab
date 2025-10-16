@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pay Success</title>
+    <style>
+        body{
+                font-family: "Nunito Sans", "Helvetica Neue", sans-serif;;
+            }
+        .container{
+            position: absolute;
+            top : 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-radius: 20px;
+            border: solid 1px black;
+            width: 35%;
+            height: auto;
+            padding-top: 25px;
+            padding-bottom: 25px;
+            min-width: fit-content;
+            box-shadow:  10px 10px 8px #888888;;
+        }
+
+        .background-tick{
+            width: 200px;
+            height: 200px;
+            border-radius: 200px;
+            background-color: #F8FAF5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .checkmark {
+            color: #9ABC66;
+            font-size: 100px;
+            line-height: 200px;
+            margin-left: -15px;
+        }
+        .detail{
+            width: 70%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-size: 19px;
+            padding-top: 5px;
+        }
+        .content{
+            min-width: fit-content;
+            min-height: fit-content;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        .content-name{
+            width: 50%;
+            margin: auto;
+            display: flex;
+            justify-content: center;
+        }
+        .content-detail{
+            width: 50%;
+            margin: auto;
+            display: flex;
+            justify-content: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Transaction Successfully</h1>
+        <div class="background-tick">
+            <i class="checkmark">✓</i>
+        </div>
+</body>
+</html>

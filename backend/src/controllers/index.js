@@ -1,0 +1,13 @@
+module.exports.authController = require("./auth.controller");
+module.exports.userController = require("./user.controller");
+module.exports.entranceTicketController = require("./entranceTicket.controller");
+module.exports.eventBookingController = require("./eventBooking.controller");
+module.exports.constantController = require("./constant.controller");
+module.exports.vipController = require("./vip.controller");
+module.exports.gameController = require("./game.controller");
+module.exports.dailyController = require("./dailyCustomer.controller");
+module.exports.eventController = require("./event.controller");
+module.exports.maintainController = require("./maintain.controller");
+module.exports.paymentController = require("./paymentController");
+module.exports.vipVoucherController = require("./vipVoucher.controller");
+module.exports.metaDataController = require("./metadata.controller");
