@@ -1,69 +1,89 @@
 const httpStatus = require("http-status");
 const bcrypt = require("bcryptjs");
-const mssql = require("mssql");
+const { Pool } = require("pg");
 const ApiError = require("../utils/ApiError");
+
+const pool = new Pool();
 
 const createUser = async (req, res, next) => {
   try {
-    if (req.body.password.length < 8) {
+    if (!req.body.password || req.body.password.length < 8) {
       throw new ApiError(400, "Password must be at least 8 characters");
-    } else if (req.body.loginName.length < 6) {
+    } else if (!req.body.loginName || req.body.loginName.length < 6) {
       throw new ApiError(400, "Login name must be at least 6 characters");
     }
     const salt = await bcrypt.genSalt(10);
     const hash = await bcrypt.hash(req.body.password, salt);
-    const request = new mssql.Request();
-    await request.query(`INSERT INTO Users(loginName,password,role) VALUES ('${req.body.loginName}','${hash}','staff')`);
-    const idQuery = await request.query("SELECT TOP(1) id FROM Users ORDER BY id DESC");
+    await pool.query("INSERT INTO Users(loginName,password,role) VALUES($1,$2,$3)", [req.body.loginName, hash, "staff"]);
+    const idQuery = await pool.query("SELECT id FROM Users ORDER BY id DESC LIMIT 1");
     res.status(200).json({
       status: "success",
       data: {
         loginName: req.body.loginName,
-        id: idQuery.recordset[0].id,
+        id: idQuery.rows[0].id,
       },
     });
   } catch (error) {
-    return next(error);
+    next(error);
   }
 };
 
-const getUser = async (req, res) => {
-  const request = new mssql.Request();
-  const user = (await request.query(`SELECT * FROM Users where id='${req.params.userId}'`)).recordset[0];
-  if (!user) {
-    throw new Error(httpStatus.NOT_FOUND, "User not found");
+const getUser = async (req, res, next) => {
+  try {
+    const userRes = await pool.query("SELECT * FROM Users where id=$1", [req.params.userId]);
+    const user = userRes.rows[0];
+    if (!user) {
+      const err = new Error("User not found");
+      err.statusCode = httpStatus.NOT_FOUND;
+      return next(err);
+    }
+    res.send(user);
+  } catch (error) {
+    next(error);
   }
-  res.send(user);
 };
-const getUsers = async (req, res) => {
-  const request = new mssql.Request();
-  const users = (await request.query(`SELECT * FROM Users `)).recordset;
-
-  res.status(200).send(users);
-};
-const updateUser = async (req, res) => {
-  const { password } = req.body;
-  let hash;
-  const request = new mssql.Request();
-  const user = (await request.query(`SELECT * FROM Users where id='${req.params.userId}'`)).recordset[0];
-  const loginName = user.loginName;
-  if (!password) hash = user.password;
-  else {
-    const salt = await bcrypt.genSalt(10);
-    hash = await bcrypt.hash(password, salt);
+const getUsers = async (req, res, next) => {
+  try {
+    const users = await pool.query("SELECT * FROM Users");
+    res.status(200).send(users.rows);
+  } catch (error) {
+    next(error);
   }
-  await request.query(`UPDATE Users SET loginName='${loginName}' , password='${hash}' WHERE id='${user.id}'`);
-  res.send({
-    _id: user.id,
-    loginName,
-    password: hash,
-    role: user.role,
-  });
 };
-const deleteUser = async (req, res) => {
-  const request = new mssql.Request();
-  await request.query(`DELETE FROM Users where id='${req.params.userId}'`);
-  res.status(httpStatus.NO_CONTENT).send();
+const updateUser = async (req, res, next) => {
+  try {
+    const { password } = req.body;
+    const userRes = await pool.query("SELECT * FROM Users where id=$1", [req.params.userId]);
+    const user = userRes.rows[0];
+    if (!user) {
+      const err = new Error("User not found");
+      err.statusCode = httpStatus.NOT_FOUND;
+      return next(err);
+    }
+    const loginName = user.loginname || user.loginName;
+    let hash = user.password;
+    if (password) {
+      const salt = await bcrypt.genSalt(10);
+      hash = await bcrypt.hash(password, salt);
+    }
+    await pool.query("UPDATE Users SET loginName=$1, password=$2 WHERE id=$3", [loginName, hash, user.id]);
+    res.send({
+      _id: user.id,
+      loginName,
+      password: hash,
+      role: user.role,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+const deleteUser = async (req, res, next) => {
+  try {
+    await pool.query("DELETE FROM Users where id=$1", [req.params.userId]);
+    res.status(httpStatus.NO_CONTENT).send();
+  } catch (error) {
+    next(error);
+  }
 };
 
 module.exports = {

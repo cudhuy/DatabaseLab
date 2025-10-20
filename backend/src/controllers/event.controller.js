@@ -1,215 +1,221 @@
 const httpStatus = require("http-status");
-const mssql = require("mssql");
+const { Pool } = require("pg");
+const pool = new Pool();
 const cloudinary = require("../utils/cloudinary");
 const { emailService } = require("../services");
 
 const getNewEvent = async (req, res, next) => {
-  const request = new mssql.Request();
-  let eventQuery;
   try {
-    eventQuery = await request.query(
+    const eventQuery = await pool.query(
       "SELECT * from EventTemplate LEFT JOIN Images on EventTemplate.imageId=Images.cloudinaryId"
     );
+    res.json(eventQuery.rows);
   } catch (e) {
-    return next(e);
+    next(e);
   }
-  console.log(eventQuery.recordset);
-  res.json(eventQuery.recordset);
 };
 const getRunningEvent = async (req, res, next) => {
-  const request = new mssql.Request();
-  let eventQuery;
   try {
-    eventQuery = await request.query(
+    const eventQuery = await pool.query(
       "SELECT * from RunningEvent LEFT JOIN Images on RunningEvent.imageId=Images.cloudinaryId"
     );
+    res.json(eventQuery.rows);
   } catch (e) {
-    return next(e);
+    next(e);
   }
-  res.json(eventQuery.recordset);
 };
 const createNewEvent = async (req, res, next) => {
-  let createBody;
-  if (!req.file) {
-    createBody = {
-      title: req.body.title ? req.body.title : "Untitled",
-      description: req.body.description ? req.body.description : "No description",
-      discount: req.body.discount || 0,
-    };
-  } else {
-    const result = await cloudinary.uploader.upload(req.file.path);
-    const request = new mssql.Request();
-    if (!result) {
-      const err = new Error("Can not upload image");
-      err.statusCode = 400;
-      return next(err);
-    }
-    await request.query(`INSERT INTO IMAGES(url,cloudinaryId) VALUES ('${result.secure_url}','${result.public_id}') `);
-    let discount = 0;
-    if (!req.body.discount) discount = req.body.discount;
-    console.log(discount);
-    createBody = {
-      title: req.body.title ? req.body.title : "Untitled",
-      description: req.body.description ? req.body.description : "No description",
-      discount,
-      image: { url: result.secure_url, cloudinary_id: result.public_id },
-    };
-  }
-  console.log(createBody);
-
-  const request = new mssql.Request();
-  if (createBody.image) {
-    await request.query(
-      `INSERT INTO EventTemplate(title,description,discount,imageId) VALUES('${createBody.title}','${createBody.description}','${createBody.discount}','${createBody.image.cloudinary_id}')`
-    );
-    console.log("Event create");
-  } else {
-    await request.query(
-      `INSERT INTO EventTemplate(title,description,discount) VALUES('${createBody.title}','${createBody.description}','${createBody.discount}')`
-    );
-    console.log("Event create");
-  }
-  const idQuery = await request.query("SELECT TOP(1) id FROM EventTemplate ORDER BY id DESC");
-  res.json({ ...createBody, _id: idQuery.recordset[0].id });
-};
-const updateEvent = async (req, res, next) => {
-  const request = new mssql.Request();
-  const eventQuery = await request.query(`SELECT * from EventTemplate where id='${req.params.id}'`);
-  if (eventQuery.recordset.length <= 0) {
-    const err = new Error("Can not find event");
-    err.statusCode = 404;
-    return next(err);
-  }
-  const event = eventQuery.recordset[0];
-  if (req.body.meta) {
-    if (
-      !req.body.meta.startTime ||
-      !req.body.meta.endTime ||
-      !req.body.meta.startBookingTime ||
-      !req.body.meta.endBookingTime
-    ) {
-      const err = new Error("Lack of field!");
-      err.statusCode = 400;
-      return next(err);
-    }
-    console.log(`SELECT * FROM RunningEvent where 
-    (
-      startTime <= CAST '${req.body.meta.startTime}' as datetime) AND
-      endTime >=(CAST '${req.body.meta.endTime}' as datetime)
-    ) OR 
-    (
-      startTime <= (CAST '${req.body.meta.endTime}' as datetime) AND
-      endTime >=(CAST '${req.body.meta.endTime}' as datetime) 
-    )
-    OR 
-    (
-      startTime <= (CAST '${req.body.meta.startTime}' as datetime) AND
-      endTime >=(CAST '${req.body.meta.startTime}' as datetime)
-    )
-    
-    `);
-    const eventCheck = await request.query(
-      `SELECT * FROM RunningEvent where 
-    (
-      startTime <= CAST( '${req.body.meta.startTime}' as datetime) AND
-      endTime >=CAST( '${req.body.meta.endTime}' as datetime)
-    ) OR 
-    (
-      startTime <= CAST( '${req.body.meta.endTime}' as datetime) AND
-      endTime >=CAST( '${req.body.meta.endTime}' as datetime) 
-    )
-    OR 
-    (
-      startTime <= CAST( '${req.body.meta.startTime}' as datetime) AND
-      endTime >=CAST( '${req.body.meta.startTime}' as datetime)
-    )
-    
-    `
-    );
-
-    if (eventCheck.recordset.length >= 1) {
-      const err = new Error("Can not create because in the same period with another event");
-      err.statusCode = 403;
-      return next(err);
-    }
-    if (!event.imageId) {
-      await request.query(`INSERT INTO RunningEvent(title,description,discount,startBookingTime,
-        endBookingTime,startTime,endTime) 
-      VALUES ('${event.title}','${event.description}','${event.discount}',
-      '${req.body.meta.startBookingTime}',
-      '${req.body.meta.endBookingTime}','${req.body.meta.startTime}','${req.body.meta.endTime}')`);
-    } else
-      await request.query(`INSERT INTO RunningEvent(title,description,discount,imageId,startBookingTime,
-                         endBookingTime,startTime,endTime) 
-                       VALUES ('${event.title}','${event.description}','${event.discount}','${event.imageId}',
-                       '${req.body.meta.startBookingTime}',
-                       '${req.body.meta.endBookingTime}','${req.body.meta.startTime}','${req.body.meta.endTime}')`);
-    res.status(200).send();
-  } else {
-    let result = {};
-    if (req.file) {
-      result = await cloudinary.uploader.upload(req.file.path);
+  try {
+    let createBody;
+    if (!req.file) {
+      createBody = {
+        title: req.body.title ? req.body.title : "Untitled",
+        description: req.body.description ? req.body.description : "No description",
+        discount: req.body.discount || 0,
+      };
+    } else {
+      const result = await cloudinary.uploader.upload(req.file.path);
       if (!result) {
-        const err = new Error("Can not upload avatar");
+        const err = new Error("Can not upload image");
         err.statusCode = 400;
         return next(err);
       }
-      if (event.imageId) cloudinary.uploader.destroy(event.imageId);
-      await Promise.all([
-        request.query(`INSERT INTO IMAGES(url,cloudinaryId) VALUES('${result.secure_url}','${result.public_id}')`),
-      ]);
-      console.log("OK");
+      await pool.query("INSERT INTO IMAGES(url,cloudinaryId) VALUES($1,$2)", [result.secure_url, result.public_id]);
+      let discount = 0;
+      if (!req.body.discount) discount = req.body.discount;
+      createBody = {
+        title: req.body.title ? req.body.title : "Untitled",
+        description: req.body.description ? req.body.description : "No description",
+        discount,
+        image: { url: result.secure_url, cloudinary_id: result.public_id },
+      };
     }
-    console.log(`UPDATE EventTemplate SET title='${req.body.title || event.title}' ,
-    description='${req.body.description || event.description}' , discount='${req.body.discount || event.discount}',
-     imageId='${result.public_id || event.imageId}' where id='${req.params.id}'`);
+    if (createBody.image) {
+      await pool.query("INSERT INTO EventTemplate(title,description,discount,imageId) VALUES($1,$2,$3,$4)", [
+        createBody.title,
+        createBody.description,
+        createBody.discount,
+        createBody.image.cloudinary_id,
+      ]);
+    } else {
+      await pool.query("INSERT INTO EventTemplate(title,description,discount) VALUES($1,$2,$3)", [
+        createBody.title,
+        createBody.description,
+        createBody.discount,
+      ]);
+    }
+    const idQuery = await pool.query("SELECT id FROM EventTemplate ORDER BY id DESC LIMIT 1");
+    res.json({ ...createBody, _id: idQuery.rows[0].id });
+  } catch (e) {
+    next(e);
+  }
+};
+const updateEvent = async (req, res, next) => {
+  try {
+    const eventQuery = await pool.query("SELECT * from EventTemplate where id=$1", [req.params.id]);
+    if (eventQuery.rows.length <= 0) {
+      const err = new Error("Can not find event");
+      err.statusCode = 404;
+      return next(err);
+    }
+    const event = eventQuery.rows[0];
+    if (req.body.meta) {
+      if (
+        !req.body.meta.startTime ||
+        !req.body.meta.endTime ||
+        !req.body.meta.startBookingTime ||
+        !req.body.meta.endBookingTime
+      ) {
+        const err = new Error("Lack of field!");
+        err.statusCode = 400;
+        return next(err);
+      }
+      const eventCheck = await pool.query(
+        `SELECT * FROM RunningEvent where 
+    (
+      startTime <= CAST($1 AS timestamp) AND
+      endTime >= CAST($2 AS timestamp)
+    ) OR 
+    (
+      startTime <= CAST($3 AS timestamp) AND
+      endTime >= CAST($3 AS timestamp) 
+    )
+    OR 
+    (
+      startTime <= CAST($1 AS timestamp) AND
+      endTime >= CAST($1 AS timestamp)
+    )`,
+        [req.body.meta.startTime, req.body.meta.endTime, req.body.meta.endTime]
+      );
 
-    await request.query(`UPDATE EventTemplate SET title='${req.body.title || event.title}' 
-  , description='${req.body.description || event.description}' , discount='${req.body.discount || event.discount}',
-   imageId='${result.public_id || event.imageId}' where id='${req.params.id}'`);
-    if (req.file) await request.query(`DELETE FROM Images where cloudinaryId='${event.imageId}'`);
-    res.status(200).send("Create successfully");
+      if (eventCheck.rows.length >= 1) {
+        const err = new Error("Can not create because in the same period with another event");
+        err.statusCode = 403;
+        return next(err);
+      }
+      if (!event.imageid && !event.imageId) {
+        await pool.query(
+          "INSERT INTO RunningEvent(title,description,discount,startBookingTime,endBookingTime,startTime,endTime) VALUES($1,$2,$3,$4,$5,$6,$7)",
+          [
+            event.title,
+            event.description,
+            event.discount,
+            req.body.meta.startBookingTime,
+            req.body.meta.endBookingTime,
+            req.body.meta.startTime,
+            req.body.meta.endTime,
+          ]
+        );
+      } else {
+        await pool.query(
+          "INSERT INTO RunningEvent(title,description,discount,imageId,startBookingTime,endBookingTime,startTime,endTime) VALUES($1,$2,$3,$4,$5,$6,$7,$8)",
+          [
+            event.title,
+            event.description,
+            event.discount,
+            event.imageid || event.imageId,
+            req.body.meta.startBookingTime,
+            req.body.meta.endBookingTime,
+            req.body.meta.startTime,
+            req.body.meta.endTime,
+          ]
+        );
+      }
+      res.status(200).send();
+    } else {
+      let result = {};
+      if (req.file) {
+        result = await cloudinary.uploader.upload(req.file.path);
+        if (!result) {
+          const err = new Error("Can not upload avatar");
+          err.statusCode = 400;
+          return next(err);
+        }
+        if (event.imageid || event.imageId) {
+          try {
+            await cloudinary.uploader.destroy(event.imageid || event.imageId);
+          } catch (err) {
+            // ignore destroy error
+          }
+        }
+        await pool.query("INSERT INTO IMAGES(url,cloudinaryId) VALUES($1,$2)", [result.secure_url, result.public_id]);
+      }
+      await pool.query("UPDATE EventTemplate SET title=$1, description=$2, discount=$3, imageId=$4 WHERE id=$5", [
+        req.body.title || event.title,
+        req.body.description || event.description,
+        req.body.discount || event.discount,
+        result.public_id || event.imageid || event.imageId,
+        req.params.id,
+      ]);
+      if (req.file) await pool.query("DELETE FROM Images where cloudinaryId=$1", [event.imageid || event.imageId]);
+      res.status(200).send("Create successfully");
+    }
+  } catch (e) {
+    next(e);
   }
 };
 const deleteNewEvent = async (req, res, next) => {
-  const request = new mssql.Request();
   try {
-    await request.query(`DELETE FROM EventTemplate Where id='${req.params.id}'`);
+    await pool.query("DELETE FROM EventTemplate Where id=$1", [req.params.id]);
     res.status(200).send("Delete sucessfully");
   } catch (e) {
-    return next(e);
+    next(e);
   }
 };
 const deleteRunningEvent = async (req, res, next) => {
-  const request = new mssql.Request();
   try {
-    await request.query(`DELETE FROM EventBooking where eventId='${req.params.id}'`);
-    await request.query(`DELETE FROM RunningEvent Where id='${req.params.id}'`);
+    await pool.query("DELETE FROM EventBooking where eventId=$1", [req.params.id]);
+    await pool.query("DELETE FROM RunningEvent Where id=$1", [req.params.id]);
     res.status(200).send("Delete sucessfully");
   } catch (e) {
-    return next(e);
+    next(e);
   }
 };
 const stopEvent = async (req, res, next) => {
-  const request = new mssql.Request();
-  await request.query(`UPDATE RunningEvent SET isStop='1' where id='${req.params.id}'`);
-  res.send("Stop successfully!");
+  try {
+    await pool.query("UPDATE RunningEvent SET isStop=1 where id=$1", [req.params.id]);
+    res.send("Stop successfully!");
+  } catch (e) {
+    next(e);
+  }
 };
 const sentNotificationEmail = async (req, res, next) => {
-  const request = new mssql.Request();
-  const eventQuery = await request.query(`SELECT * FROM RunningEvent where id='${req.params.id}'`);
-  const { discount } = eventQuery.recordset[0];
-  let listEmail = (await request.query("SELECT email From Customer")).recordset;
-  listEmail = listEmail.map(el => el.email);
-  const to = listEmail.join(",");
-  console.log(to);
-
-  const data = { to, subject: "New event upcoming!!" };
   try {
-    await emailService.sendEjsMail({ template: "template", templateVars: { discount }, ...data });
-    res.send("Send mail successfully !");
-  } catch (error) {
-    res.status(500).send("Send mail fail !");
+    const eventQuery = await pool.query("SELECT * FROM RunningEvent where id=$1", [req.params.id]);
+    const event = eventQuery.rows[0] || {};
+    const discount = event.discount;
+    let listEmailRes = await pool.query("SELECT email From Customer");
+    let listEmail = listEmailRes.rows.map(el => el.email);
+    const to = listEmail.join(",");
+    const data = { to, subject: "New event upcoming!!" };
+    try {
+      await emailService.sendEjsMail({ template: "template", templateVars: { discount }, ...data });
+      res.send("Send mail successfully !");
+    } catch (error) {
+      res.status(500).send("Send mail fail !");
+    }
+  } catch (e) {
+    next(e);
   }
 };
 module.exports = {

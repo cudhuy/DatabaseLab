@@ -1,25 +1,32 @@
 const validator = require("validator");
-const mssql = require("mssql");
+const { Pool } = require("pg");
+const pool = new Pool();
 
 const getCustomer = async (req, res, next) => {
-  const request = new mssql.Request();
-  const customerQuery = await request.query("SELECT * FROM Customer");
-  res.json(customerQuery.recordset[0]);
+  try {
+    const result = await pool.query("SELECT * FROM Customer");
+    res.json(result.rows[0]);
+  } catch (e) {
+    next(e);
+  }
 };
 const createCustomer = async (req, res, next) => {
-  if (!req.body.email || !req.body.name) {
-    const err = new Error("Lack of field");
-    err.statusCode = 400;
-    return next(err);
+  try {
+    if (!req.body.email || !req.body.name) {
+      const err = new Error("Lack of field");
+      err.statusCode = 400;
+      return next(err);
+    }
+    if (!validator.isEmail(req.body.email)) {
+      const err = new Error("Invalid Email");
+      err.statusCode = 400;
+      return next(err);
+    }
+    await pool.query("INSERT INTO Customer(email,name) VALUES($1,$2)", [req.body.email, req.body.name]);
+    res.send("Create successfully");
+  } catch (e) {
+    next(e);
   }
-  if (!validator.default.isEmail(req.body.email)) {
-    const err = new Error("Invalid Email");
-    err.statusCode = 400;
-    return next(err);
-  }
-  const request = new mssql.Request();
-  await request.query(`INSERT INTO Customer(email,name) VALUES('${req.body.email}','${req.body.name}') `);
-  res.send("Create successfully");
 };
 module.exports = {
   getCustomer,

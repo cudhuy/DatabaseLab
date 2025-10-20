@@ -1,31 +1,39 @@
-const mssql = require("mssql");
+const { Pool } = require("pg");
+const pool = new Pool();
 
 const getAllConstant = async (req, res, next) => {
-  const request = new mssql.Request();
-  const type = (await request.query(`Select * from TicketType`)).recordset;
-  console.log(type);
-  res.json({
-    ticketPrice: {
-      day: type[0].cost,
-      turn: type[1].cost,
-    },
-  });
+  try {
+    const result = await pool.query("SELECT * FROM TicketType ORDER BY id ASC");
+    const rows = result.rows;
+    res.json({
+      ticketPrice: {
+        day: rows[0] ? rows[0].cost : 0,
+        turn: rows[1] ? rows[1].cost : 0,
+      },
+    });
+  } catch (e) {
+    next(e);
+  }
 };
 const updateConstant = async (req, res, next) => {
-  const request = new mssql.Request();
-  const type = (await request.query(`Select * from TicketType`)).recordset;
-  if (!req.body.ticketPrice) {
-    const err = new Error("Lack of field");
-    err.statusCode = 400;
-    return next(err);
+  try {
+    const result = await pool.query("SELECT * FROM TicketType ORDER BY id ASC");
+    const rows = result.rows;
+    if (!req.body.ticketPrice) {
+      const err = new Error("Lack of field");
+      err.statusCode = 400;
+      return next(err);
+    }
+    const type1 = req.body.ticketPrice.day || (rows[0] && rows[0].cost) || 0;
+    const type2 = req.body.ticketPrice.turn || (rows[1] && rows[1].cost) || 0;
+    await Promise.all([
+      pool.query(`UPDATE TicketType SET cost=$1 WHERE id=1`, [type1]),
+      pool.query(`UPDATE TicketType SET cost=$1 WHERE id=2`, [type2]),
+    ]);
+    res.send("Successfully");
+  } catch (e) {
+    next(e);
   }
-  const type1 = req.body.ticketPrice.day || type[0].cost;
-  const type2 = req.body.ticketPrice.turn || type[1].cost;
-  await Promise.all([
-    request.query(`UPDATE TicketType SET cost='${type1}' where id=1`),
-    request.query(`UPDATE TicketType SET cost='${type2}' where id=2`),
-  ]);
-  res.send("Successfully");
 };
 module.exports = {
   getAllConstant,
