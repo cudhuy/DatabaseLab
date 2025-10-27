@@ -1,30 +1,39 @@
-const mssql = require("mssql");
+const { Pool } = require("pg");
 const app = require("./app");
 const config = require("./config/config");
 
 let server;
 
-const dbSettings = {
-  user: config.sql.user,
-  password: config.sql.password,
-  server: "localhost",
-  database: "TESTFINAL",
-  options: {
-    trustServerCertificate: true, // change to true for local dev / self-signed certs
-  },
-};
-
-mssql.connect(dbSettings).then(() => {
-  console.log("Connected to SQL Server successfully");
-  server = app.listen(config.port, () => {
-    console.log(`Server is running on port ${config.port}`);
-  });
+// Tạo kết nối tới PostgreSQL
+const pool = new Pool({
+  user: config.pg.user,
+  password: config.pg.password,
+  host: config.pg.host || "localhost",
+  port: config.pg.port || 5432,
+  database: config.pg.database,
+  ssl: config.pg.ssl || false, // nếu chạy local, nên để false
 });
 
+// Kiểm tra kết nối DB và khởi động server
+(async () => {
+  try {
+    await pool.connect();
+    console.log("✅ Connected to PostgreSQL successfully");
+
+    server = app.listen(config.port, () => {
+      console.log(`🚀 Server is running on port ${config.port}`);
+    });
+  } catch (error) {
+    console.error("❌ Failed to connect to PostgreSQL:", error.message);
+    process.exit(1);
+  }
+})();
+
+// Xử lý dừng server an toàn
 const exitHandler = () => {
   if (server) {
     server.close(() => {
-      console.log("Server closed");
+      console.log("🛑 Server closed");
       process.exit(1);
     });
   } else {
@@ -33,7 +42,7 @@ const exitHandler = () => {
 };
 
 const unexpectedErrorHandler = error => {
-  console.log(error);
+  console.error("Unexpected error:", error);
   exitHandler();
 };
 
@@ -42,7 +51,5 @@ process.on("unhandledRejection", unexpectedErrorHandler);
 
 process.on("SIGTERM", () => {
   console.log("SIGTERM received");
-  if (server) {
-    server.close();
-  }
+  if (server) server.close();
 });
