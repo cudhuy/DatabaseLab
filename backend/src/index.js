@@ -30,9 +30,16 @@ const pool = new Pool({
 })();
 
 // Xử lý dừng server an toàn
-const exitHandler = () => {
+const exitHandler = async () => {
   if (server) {
-    server.close(() => {
+    console.log("🛑 Closing server...");
+    server.close(async () => {
+      try {
+        await pool.end();
+        console.log("✅ Database connection pool closed");
+      } catch (err) {
+        console.error("⚠️ Error closing database pool:", err.message);
+      }
       console.log("🛑 Server closed");
       process.exit(1);
     });

@@ -3,6 +3,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 // const httpStatus=require('http-status');
 const routes = require("./routes/v1/index");
+const ApiError = require("./utils/ApiError");
 // const timeout = require("connect-timeout");
 
 const app = express();
@@ -30,14 +31,12 @@ app.get("/congratPayment", (req, res) => {
 app.use("/api/v1", routes);
 
 // all the another routes are not valid
-
 app.all("*", (req, res, next) => {
-  const err = new Error("The route can not be found");
-  err.statusCode = 404;
-  next(err);
+  next(new ApiError(404, "The route cannot be found"));
 });
 
 // use error handler
 app.use(errorHandler);
+
 // export module
 module.exports = app;
