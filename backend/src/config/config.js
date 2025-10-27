@@ -56,7 +56,7 @@ module.exports = {
     client_id: envVars.PAYPAL_CLIENT_ID,
     client_secret: envVars.PAYPAL_CLIENT_SECRET,
   },
-  postgres: {
+  pg: {
     user: envVars.PG_USER,
     password: envVars.PG_PASSWORD,
     host: envVars.PG_HOST,
