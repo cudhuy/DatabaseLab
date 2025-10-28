@@ -8,6 +8,9 @@ const { authController } = require("../../controllers");
 router.post("/login", authController.login);
 // router.post("/register", authController.register);
 router.get("/", auth.verifyUser, authController.getCurrentUser);
+router.get("/ping", (req, res) => {
+  res.json({ status: "ok", message: "Auth route working" });
+});
 /*
 router.post("/send", async (req, res, next) => {
   const data = { to: "nmt14301@gmail.com", subject: "New event upcoming!!" };

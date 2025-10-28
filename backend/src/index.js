@@ -18,7 +18,7 @@ const pool = new Pool({
 (async () => {
   try {
     await pool.connect();
-    console.log("✅ Connected to PostgreSQL successfully");
+    console.log("✅ Connected to PostgreSQL successfully to database:", config.pg.database);
 
     server = app.listen(config.port, () => {
       console.log(`🚀 Server is running on port ${config.port}`);

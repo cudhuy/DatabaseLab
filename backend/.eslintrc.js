@@ -15,10 +15,7 @@ module.exports = {
     quotes: ["error", "double", { allowTemplateLiterals: true }],
     "consistent-return": "off",
     semi: ["error", "always"],
-    "no-unused-vars": [
-      "warn",
-      { vars: "all", varsIgnorePattern: "^_$", argsIgnorePattern: "^_$", ignoreRestSiblings: true },
-    ],
+    "no-unused-vars": "off",
     "no-underscore-dangle": ["error", { allow: ["_id"] }],
     "no-console": "off",
     "no-restricted-syntax": "off",

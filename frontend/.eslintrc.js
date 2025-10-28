@@ -23,15 +23,7 @@ module.exports = {
         "linebreak-style": 0,
         quotes: ["error", "double"],
         semi: ["error", "always"],
-        "no-unused-vars": [
-            "warn",
-            {
-                vars: "all",
-                varsIgnorePattern: "^_$",
-                argsIgnorePattern: "^_$",
-                ignoreRestSiblings: true,
-            },
-        ],
+        "no-unused-vars": "off",
         "no-console": "off",
         "no-prototype-builtins": "off",
         "no-empty": "warn",

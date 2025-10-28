@@ -65,9 +65,9 @@ const EventOccuringDisplay = ({ event }) => {
                             <span style={{ fontWeight: "bold" }}>&nbsp;{new Date(event.endTime).toLocaleString()}</span>
                         </Typography>
                         <Box py={1}></Box>
-                        <h3 component="h1">
+                        <Typography component="h3" variant="h5">
                             Discount:&nbsp;<span>{event?.discount}&nbsp;%</span>
-                        </h3>
+                        </Typography>
                         {event.isStop == true ? (
                             <Typography style={{ textAlign: "center" }}>This event is closed</Typography>
                         ) : (

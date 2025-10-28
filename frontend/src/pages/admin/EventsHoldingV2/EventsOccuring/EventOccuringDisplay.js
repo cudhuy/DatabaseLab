@@ -76,9 +76,9 @@ const EventOccuringDisplay = ({ event }) => {
                             <span style={{ fontWeight: "bold" }}>&nbsp;{new Date(event.endTime).toLocaleString()}</span>
                         </Typography>
                         <Box py={1}></Box>
-                        <h3 component="h1">
+                        <Typography component="h3" variant="h5">
                             Discount:&nbsp;<span>{event?.discount}&nbsp;%</span>
-                        </h3>
+                        </Typography>   
                         <Box>
                             <StopEventButton event={event} /> {/* <EditButton event={event}/> */}{" "}
                             <Button variant="contained" onClick={openDialog} disabled={loading}>

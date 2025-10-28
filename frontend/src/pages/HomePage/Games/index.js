@@ -84,7 +84,11 @@ const Games = () => {
                                 <Box className={"imgCustom"}>
                                     <Boop rotation={5} timing={50}>
                                         <Box maxWidth="500px">
-                                            <img maxwidth="100%" src={item} />
+                                            <img
+                                                style={{ maxWidth: "100%", borderRadius: "10px" }}
+                                                src={item}
+                                                alt={`Game ${index + 1}`}
+                                            />
                                         </Box>
                                     </Boop>
                                 </Box>

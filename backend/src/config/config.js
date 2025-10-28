@@ -60,7 +60,7 @@ module.exports = {
     user: envVars.PG_USER,
     password: envVars.PG_PASSWORD,
     host: envVars.PG_HOST,
-    port: envVars.PG_PORT,
+    port: parseInt(process.env.PG_PORT, 10),
     database: envVars.PG_DATABASE,
   },
 };

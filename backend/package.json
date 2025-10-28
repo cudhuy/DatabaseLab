@@ -5,8 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "st": "cross-env NODE_ENV=development nodemon src/index.js",
-    "start": "pm2 start ecosystem.config.js --no-daemon",
-    "prepare": "husky install"
+    "start": "pm2 start ecosystem.config.js --no-daemon"
   },
   "keywords": [],
   "author": "",
@@ -48,7 +47,6 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-import": "^2.30.0",
-    "husky": "^9.1.6",
     "lint-staged": "^15.2.10",
     "nodemon": "^3.1.7",
     "prettier": "^3.3.3"
