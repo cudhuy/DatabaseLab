@@ -32,7 +32,6 @@
         "react-qr-reader": "^2.2.1",
         "react-redux": "^8.0.1",
         "react-router-dom": "^6.3.0",
-        "react-scripts": "5.0.1",
         "react-spinners": "^0.11.0",
         "react-spring": "^9.4.5",
         "react-swipeable-views": "^0.14.0",
@@ -40,10 +39,10 @@
         "web-vitals": "^2.1.4"
     },
     "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject",
+        "dev": "vite",
+        "build": "vite build",
+        "preview": "vite preview",
+        "test": "echo \"No test configured\"",
         "lint:staged": "lint-staged"
     },
     "lint-staged": {
@@ -54,9 +53,15 @@
     },
     "eslintConfig": {
         "extends": [
-            "react-app",
-            "react-app/jest"
-        ]
+            "eslint:recommended",
+            "plugin:react/recommended",
+            "plugin:react-hooks/recommended"
+        ],
+        "settings": {
+            "react": {
+                "version": "detect"
+            }
+        }
     },
     "browserslist": {
         "production": [
@@ -80,7 +85,10 @@
         "eslint-plugin-react": "^7.29.4",
         "lint-staged": "^12.4.1",
         "prettier": "2.6.2",
-        "redux-logger": "^3.0.6"
+        "redux-logger": "^3.0.6",
+        "@vitejs/plugin-react": "^4.3.1",
+        "eslint-plugin-react-hooks": "^4.6.2",
+        "vite": "^5.4.1"
     },
     "config": {
         "commitizen": {

@@ -1,9 +1,10 @@
 import { createSlice, createAsyncThunk, createDraftSafeSelector } from "@reduxjs/toolkit";
 import Axios from "axios";
 import { ERR_TOP_CENTER, SUCCESS_TOP_CENTER } from "src/utils/snackbar-utils";
+import { API_BASE_URL } from "src/utils/env";
 
 const client = Axios.create({
-    baseURL: process.env.REACT_APP_BASEURL,
+    baseURL: API_BASE_URL,
 });
 
 export const fetchAllGames = createAsyncThunk("gameSlice/fetchAllGames", async (_, thunkAPI) => {

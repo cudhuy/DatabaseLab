@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, createDraftSafeSelector } from "@reduxjs
 import { FS } from "../other/constant";
 import { ERR_TOP_CENTER } from "src/utils/snackbar-utils";
 import Axios from "axios";
+import { API_BASE_URL } from "src/utils/env";
 
 const initState = {
     accountData: undefined,
@@ -10,11 +11,11 @@ const initState = {
 };
 const client = Axios.create({
     // baseURL: "https://tinkerbell-garden.herokuapp.com",
-    baseURL: process.env.REACT_APP_BASEURL
+    baseURL: API_BASE_URL,
 });
 export const userLogin = createAsyncThunk("authSlice/userLogin", async (user, thunkAPI) => {
     try {
-        console.log(process.env.REACT_APP_BASEURL);
+        console.log(API_BASE_URL);
         const res = await client.post("/api/v1/auth/login", user).then((res) => res.data);
         console.log(res);
         return res;

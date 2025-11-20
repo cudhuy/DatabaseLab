@@ -8,6 +8,7 @@ import reportReducer from "./slices/reportSlice";
 import vipReducer from "./slices/vipSlice";
 import statisticsReducer from "./slices/statistics";
 import themeReducer from "./slices/themeSlice";
+import { isDevelopment } from "src/utils/env";
 
 export default configureStore({
     reducer: {
@@ -22,5 +23,5 @@ export default configureStore({
         themeSlice: themeReducer,
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }), //tránh error non-serialize
-    devTools: process.env.NODE_ENV === "development",
+    devTools: isDevelopment,
 });

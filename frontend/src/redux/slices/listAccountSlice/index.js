@@ -1,8 +1,9 @@
 import { createSlice, createAsyncThunk, createDraftSafeSelector } from "@reduxjs/toolkit";
 import Axios from "axios";
+import { API_BASE_URL } from "src/utils/env";
 
 const client = Axios.create({
-    baseURL: process.env.REACT_APP_BASEURL,
+    baseURL: API_BASE_URL,
 });
 
 export const fetchAllAccount = createAsyncThunk("listAccountSlice/fetchAllAccount", async (_, thunkAPI) => {

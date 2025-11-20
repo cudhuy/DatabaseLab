@@ -3,9 +3,10 @@ import Axios from "axios";
 import { mergeObject } from "src/utils";
 import { ERR_TOP_CENTER, SUCCESS_TOP_CENTER, WARNING_TOP_CENTER } from "src/utils/snackbar-utils";
 import { FS } from "src/redux/slices/other/constant";
+import { API_BASE_URL } from "src/utils/env";
 
 const client = Axios.create({
-    baseURL: process.env.REACT_APP_BASEURL,
+    baseURL: API_BASE_URL,
 });
 
 export const fetchFirstTime = createAsyncThunk("reportSlice/fetchFirstTime", async (_, thunkAPI) => {

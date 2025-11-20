@@ -15,9 +15,12 @@ Please go through [it](https://docs.google.com/document/d/1QnqfDwXZ7QyC6HHMwNRyL
 ### Development
 
 ```
-  npm run install
-  npm run start
+  npm install
+  npm run dev
 ```
+
+- Copy `.env.example` to `.env.local` and provide `VITE_BASEURL` so Axios can reach the Express backend.
+- The Vite dev server runs on port `3000` to mirror the previous CRA setup; adjust the port in `vite.config.js` if needed.
 
 ## VSCode Extensions:
 
