@@ -2,8 +2,19 @@ const httpStatus = require("http-status");
 const bcrypt = require("bcryptjs");
 const { Pool } = require("pg");
 const ApiError = require("../utils/ApiError");
+const config = require("../config/config");
 
-const pool = new Pool();
+const pool = new Pool(
+  config.pg.connectionString
+    ? { connectionString: config.pg.connectionString }
+    : {
+        user: config.pg.user,
+        password: config.pg.password,
+        host: config.pg.host,
+        port: config.pg.port,
+        database: config.pg.database,
+      }
+);
 
 const createUser = async (req, res, next) => {
   try {

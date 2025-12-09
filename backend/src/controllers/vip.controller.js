@@ -5,8 +5,19 @@ const bcrypt = require("bcryptjs");
 const QRCode = require("qrcode");
 const { emailService } = require("../services");
 const cloudinary = require("../utils/cloudinary");
+const config = require("../config/config");
 
-const pool = new Pool();
+const pool = new Pool(
+  config.pg.connectionString
+    ? { connectionString: config.pg.connectionString }
+    : {
+        user: config.pg.user,
+        password: config.pg.password,
+        host: config.pg.host,
+        port: config.pg.port,
+        database: config.pg.database,
+      }
+);
 
 const getAllVip = async (req, res, next) => {
   try {

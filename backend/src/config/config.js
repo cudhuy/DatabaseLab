@@ -22,6 +22,7 @@ const envVarsSchema = Joi.object()
     PAYPAL_CLIENT_ID: Joi.string().description("paypal client id"),
     PAYPAL_CLIENT_SECRET: Joi.string().description("paypal client secret"),
 
+    DATABASE_URL: Joi.string().description("PostgreSQL connection string"),
     PG_USER: Joi.string().description("PostgreSQL user"),
     PG_PASSWORD: Joi.string().description("PostgreSQL password"),
     PG_HOST: Joi.string().description("PostgreSQL host"),
@@ -57,6 +58,8 @@ module.exports = {
     client_secret: envVars.PAYPAL_CLIENT_SECRET,
   },
   pg: {
+    // Use DATABASE_URL if available, otherwise use individual variables
+    connectionString: envVars.DATABASE_URL,
     user: envVars.PG_USER,
     password: envVars.PG_PASSWORD,
     host: envVars.PG_HOST,

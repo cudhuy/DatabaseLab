@@ -5,14 +5,21 @@ const config = require("./config/config");
 let server;
 
 // Tạo kết nối tới PostgreSQL
-const pool = new Pool({
-  user: config.pg.user,
-  password: config.pg.password,
-  host: config.pg.host || "localhost",
-  port: config.pg.port || 5432,
-  database: config.pg.database,
-  ssl: config.pg.ssl || false, // nếu chạy local, nên để false
-});
+const pool = new Pool(
+  config.pg.connectionString
+    ? {
+        connectionString: config.pg.connectionString,
+        ssl: config.pg.ssl || false,
+      }
+    : {
+        user: config.pg.user,
+        password: config.pg.password,
+        host: config.pg.host || "localhost",
+        port: config.pg.port || 5432,
+        database: config.pg.database,
+        ssl: config.pg.ssl || false,
+      }
+);
 
 // Kiểm tra kết nối DB và khởi động server
 (async () => {

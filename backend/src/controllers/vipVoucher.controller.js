@@ -1,6 +1,18 @@
 const voucherCodes = require("voucher-code-generator");
 const { Pool } = require("pg");
-const pool = new Pool();
+const config = require("../config/config");
+
+const pool = new Pool(
+  config.pg.connectionString
+    ? { connectionString: config.pg.connectionString }
+    : {
+        user: config.pg.user,
+        password: config.pg.password,
+        host: config.pg.host,
+        port: config.pg.port,
+        database: config.pg.database,
+      }
+);
 
 const getVipVoucher = async (req, res, next) => {
   try {

@@ -1,8 +1,20 @@
 const httpStatus = require("http-status");
 const { Pool } = require("pg");
-const pool = new Pool();
+const config = require("../config/config");
 const cloudinary = require("../utils/cloudinary");
 const { emailService } = require("../services");
+
+const pool = new Pool(
+  config.pg.connectionString
+    ? { connectionString: config.pg.connectionString }
+    : {
+        user: config.pg.user,
+        password: config.pg.password,
+        host: config.pg.host,
+        port: config.pg.port,
+        database: config.pg.database,
+      }
+);
 
 const getNewEvent = async (req, res, next) => {
   try {

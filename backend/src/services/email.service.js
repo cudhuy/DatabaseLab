@@ -12,15 +12,16 @@ const sendEmail = async (to, subject, templateName, data) => {
     const inlinedHTML = juice(html);
 
     const transporter = nodemailer.createTransport({
-      service: "gmail",
+      service: config.email.smtp.service,
+      port: config.email.smtp.port,
       auth: {
-        user: config.email.user,
-        pass: config.email.password,
+        user: config.email.smtp.auth.user,
+        pass: config.email.smtp.auth.pass,
       },
     });
 
     const mailOptions = {
-      from: config.email.user,
+      from: config.email.smtp.auth.user,
       to,
       subject,
       html: inlinedHTML,
@@ -32,4 +33,33 @@ const sendEmail = async (to, subject, templateName, data) => {
   }
 };
 
-module.exports = { sendEmail };
+// Alias method for compatibility with existing code
+const sendEjsMail = async ({ to, subject, template, templateVars }) => {
+  try {
+    const templatePath = path.join(__dirname, "../templates", `${template}.ejs`);
+    const html = await ejs.renderFile(templatePath, templateVars);
+    const inlinedHTML = juice(html);
+
+    const transporter = nodemailer.createTransport({
+      service: config.email.smtp.service,
+      port: config.email.smtp.port,
+      auth: {
+        user: config.email.smtp.auth.user,
+        pass: config.email.smtp.auth.pass,
+      },
+    });
+
+    const mailOptions = {
+      from: config.email.smtp.auth.user,
+      to,
+      subject,
+      html: inlinedHTML,
+    };
+
+    await transporter.sendMail(mailOptions);
+  } catch (error) {
+    throw new ApiError(500, `Email sending failed: ${error.message}`);
+  }
+};
+
+module.exports = { sendEmail, sendEjsMail };
