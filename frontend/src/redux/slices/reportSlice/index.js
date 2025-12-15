@@ -95,7 +95,7 @@ export const editReport = createAsyncThunk(
             uploadData.append("description", description);
             uploadData.append("gameId", gameId);
             uploadData.append("status", status);
-            const response = await client.patch(`api/v1/maintainance/${id}`, uploadData, config);
+            const response = await client.patch(`/api/v1/maintainance/${id}`, uploadData, config);
             await thunkAPI.dispatch(fetchReport(thunkAPI.getState().reportSlice.reportConfig));
             eq("Edit report successfully!!", SUCCESS_TOP_CENTER);
             return;

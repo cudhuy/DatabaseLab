@@ -168,7 +168,7 @@ export const stopEvent = createAsyncThunk("eventSliceV2/stopEvent", async ({ eq,
                 Authorization: `Bearer ${token}`,
             },
         };
-        const response = await client.patch(`api/v1/event/${id}/stop`, config);
+        const response = await client.patch(`/api/v1/event/${id}/stop`, {}, config);
         console.log(response);
         eq("Stop event successfully!!!", SUCCESS_TOP_CENTER);
         closeDialog();

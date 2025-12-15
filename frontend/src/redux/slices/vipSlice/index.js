@@ -31,9 +31,9 @@ export const updateVIPInfo = createAsyncThunk(
             };
             var response;
             if (code.length <= 5) {
-                response = await client.patch("api/v1/vip", { name, email, phone, code }, config);
+                response = await client.patch("/api/v1/vip", { name, email, phone, code }, config);
             } else {
-                response = await client.patch("api/v1/vip", { name, email, phone, uuid: code }, config);
+                response = await client.patch("/api/v1/vip", { name, email, phone, uuid: code }, config);
             }
             console.log(response);
             return response;
@@ -50,7 +50,7 @@ export const retrieveInfo = createAsyncThunk("vipSlice/retrieveInfo", async ({ n
         const config = {
             headers: { Authorization: `Bearer ${token}` },
         };
-        const response = await client.patch("api/v1/vip", { name, email, phone, password: true }, config);
+        const response = await client.patch("/api/v1/vip", { name, email, phone, password: true }, config);
         console.log(response);
         return { data: response.data.vipCode };
     } catch (err) {
@@ -74,7 +74,7 @@ export const payVIP = createAsyncThunk("vipSlice/payVIP", async ({ code }, thunk
             body.uuid = code;
         }
         console.log(body);
-        const response = await client.patch("api/v1/vip", body, config);
+        const response = await client.patch("/api/v1/vip", body, config);
         console.log(response);
         return;
     } catch (err) {
@@ -92,9 +92,9 @@ export const fetchDataAuto = createAsyncThunk("vipSlice/fetchDataAuto", async ({
         var response;
         var data;
         if (code.length <= 5) {
-            response = await client.get(`api/v1/vip/bycode/${code}`, config);
+            response = await client.get(`/api/v1/vip/bycode/${code}`, config);
         } else {
-            response = await client.get(`api/v1/vip/byid/${code}`, config);
+            response = await client.get(`/api/v1/vip/byid/${code}`, config);
         }
         console.log(response);
         const voucherRes = await client.post("/api/v1/vipvoucher/getvoucher", { vipId: response.data._id }, config);
@@ -139,7 +139,7 @@ export const sellTicketVIP = createAsyncThunk(
             if (voucher) {
                 body.vipVoucherCode = voucher;
             }
-            const response = await client.post("api/v1/entranceticket/vip", body, config);
+            const response = await client.post("/api/v1/entranceticket/vip", body, config);
             console.log(response);
             return {
                 idList: response.data.result,

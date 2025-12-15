@@ -88,6 +88,16 @@ export const createNewEvent = createAsyncThunk(
             console.log(response);
             eq("Create new event successfully!", SUCCESS_TOP_CENTER);
             closeCreateDialog();
+            // reuse id for optional notification email
+            const createdId = response?.data?._id;
+            if (mailDailyCustomer) {
+                if (createdId) {
+                    await client.post(`/api/v1/event/${createdId}/sendmail`, {}, config);
+                    eq("Send email successfully!", SUCCESS_TOP_CENTER);
+                } else {
+                    eq("Cannot send email: missing event id", ERR_TOP_CENTER);
+                }
+            }
             return {
                 title: response.data.title,
                 url: response.data?.image?.url,
@@ -101,22 +111,6 @@ export const createNewEvent = createAsyncThunk(
             console.log(err);
             eq(err.response.data.message, ERR_TOP_CENTER);
             return null;
-        } finally {
-            try {
-                const token = thunkAPI.getState().authSlice.accountData.token;
-                const config = {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                    },
-                };
-                if (mailDailyCustomer) {
-                    await client.post("api/v1/event/sendmail", {}, config);
-                    eq("Send email successfully!", SUCCESS_TOP_CENTER);
-                }
-            } catch (err) {
-                console.log(err);
-                eq(err.response.data.message, ERR_TOP_CENTER);
-            }
         }
     }
 );
