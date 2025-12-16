@@ -50,7 +50,7 @@ const auth = {
   verifyStaff: (req, res, next) => {
     auth.verifyToken(req, res, err => {
       if (err) return next(err);
-      if (req.user.role === "staff") return next();
+      if (["staff", "admin"].includes(req.user.role)) return next();
       const err2 = new Error("Forbidden");
       err2.statusCode = 403;
       return next(err2);

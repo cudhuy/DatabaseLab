@@ -9,13 +9,20 @@ import {
     TableCell,
     TableBody,
     TextField,
+    Button,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
 } from "@mui/material";
 import React, { useState } from "react";
 import { styled, alpha, useTheme } from "@mui/system";
-import { useSelector } from "react-redux";
-import { selectVIPAccounts } from "src/redux/slices/listAccountSlice";
+import { useSelector, useDispatch } from "react-redux";
+import { selectVIPAccounts, createVIPAccount, fetchAllAccount } from "src/redux/slices/listAccountSlice";
 import Empty from "src/components/Empty";
 import VIPDeleteButton from "./VIPDeleteButton";
+import { useSnackbar } from "notistack";
+// import CreateNewButton from "./CreateNewButton";
 
 const CustomClass = styled(Box)((theme) => ({
     ".wrapper": {
@@ -105,9 +112,34 @@ const CellBody = styled(TableCell)((theme) => ({
 
 const VIPManagement = () => {
     const [searchUsername, setSearchUsername] = useState("");
-    const [searchID, setSearchID] = useState("");
+    const [openCreate, setOpenCreate] = useState(false);
+    const [name, setName] = useState("");
+    const [email, setEmail] = useState("");
+    const [phone, setPhone] = useState("");
+    const [loadingCreate, setLoadingCreate] = useState(false);
     const VIPAccounts = useSelector((state) => selectVIPAccounts(state));
     const theme = useTheme();
+    const dp = useDispatch();
+    const { enqueueSnackbar: eq } = useSnackbar();
+
+    const resetForm = () => {
+        setName("");
+        setEmail("");
+        setPhone("");
+    };
+    const handleCreate = async () => {
+        setLoadingCreate(true);
+        const res = await dp(createVIPAccount({ name, email, phone }));
+        if (res.error) {
+            eq(res.error?.message || "Failed to create VIP", { variant: "error" });
+        } else {
+            eq("Create VIP account successfully", { variant: "success" });
+            await dp(fetchAllAccount());
+            setOpenCreate(false);
+            resetForm();
+        }
+        setLoadingCreate(false);
+    };
 
     return (
         <CustomClass>
@@ -122,26 +154,78 @@ const VIPManagement = () => {
                 >
                     VIP Management
                 </Typography>
-                <NormTextField
-                    variant="outlined"
-                    label="Search by username"
-                    size="small"
-                    inputProps={{ className: "input" }}
-                    style={{ marginTop: "3px" }}
-                    value={searchUsername}
-                    onChange={(e) => setSearchUsername(e.target.value)}
-                />
-                <span>&nbsp;&nbsp;</span>
-                <NormTextField
-                    variant="outlined"
-                    label="Search by id"
-                    size="small"
-                    inputProps={{ className: "input" }}
-                    style={{ marginTop: "3px" }}
-                    value={searchID}
-                    onChange={(e) => setSearchID(e.target.value)}
-                />
+                <Box sx={{ display: "flex", alignItems: "center", gap: 2, flexWrap: "wrap", mt: 1 }}>
+                    {/* <CreateNewButton /> */}
+                    <NormTextField
+                        variant="outlined"
+                        label="Search by username"
+                        size="small"
+                        inputProps={{ className: "input" }}
+                        value={searchUsername}
+                        onChange={(e) => setSearchUsername(e.target.value)}
+                    />
+                </Box>
                 <Box py={1}></Box>
+                <Dialog
+                    open={openCreate}
+                    onClose={() => setOpenCreate(false)}
+                    maxWidth="xs"
+                    fullWidth
+                    PaperProps={{
+                        style: { backgroundColor: theme.palette.commonText.grayWhite },
+                    }}
+                >
+                    <DialogTitle>
+                        <Typography
+                            style={{
+                                color: theme.palette.primary.main,
+                                textAlign: "center",
+                                fontWeight: "bold",
+                                fontSize: "28px",
+                            }}
+                        >
+                            Create account
+                        </Typography>
+                    </DialogTitle>
+                    <DialogContent>
+                        <Typography sx={{ mb: 0.5 }}>Name</Typography>
+                        <TextField
+                            fullWidth
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            placeholder="Full name"
+                            size="small"
+                            sx={{ mb: 2 }}
+                        />
+                        <Typography sx={{ mb: 0.5 }}>Email</Typography>
+                        <TextField
+                            fullWidth
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            placeholder="Email"
+                            size="small"
+                            sx={{ mb: 2 }}
+                        />
+                        <Typography sx={{ mb: 0.5 }}>Phone</Typography>
+                        <TextField
+                            fullWidth
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            placeholder="Phone number"
+                            size="small"
+                        />
+                    </DialogContent>
+                    <DialogActions sx={{ px: 3, pb: 3 }}>
+                        <Button
+                            variant="contained"
+                            fullWidth
+                            disabled={loadingCreate}
+                            onClick={handleCreate}
+                        >
+                            {loadingCreate ? "Creating..." : "Create account"}
+                        </Button>
+                    </DialogActions>
+                </Dialog>
                 <TableContainer>
                     <Table>
                         <TableHead>
@@ -170,8 +254,7 @@ const VIPManagement = () => {
                             {VIPAccounts.map((detail, index) => {
                                 if (
                                     (detail.name.toLowerCase().includes(searchUsername.toLowerCase()) ||
-                                        searchUsername == "") &&
-                                    (searchID == "" || detail.id.toLowerCase().includes(searchID.toLowerCase()))
+                                        searchUsername == "")
                                 ) {
                                     return (
                                         <TableRow

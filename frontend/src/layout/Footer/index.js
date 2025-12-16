@@ -25,7 +25,7 @@ const FooterContainer = styled(Box)((theme) => ({
         fontWeight: "bold",
     },
     ".text": {
-        color: alpha(theme.theme.palette.commonText.black, 0.7),
+        color: theme.theme.palette.commonText.white,
     },
     ".wrapper": {
         [theme.theme.breakpoints.down("sm")]: {
@@ -43,7 +43,7 @@ const FooterContainer = styled(Box)((theme) => ({
         top: "4px",
     },
     ".smallTextWrapper": {
-        color: alpha(theme.theme.palette.commonText.black, 0.7),
+        color: theme.theme.palette.commonText.white,
         cursor: "pointer",
         display: "flex",
         "&:hover": {
@@ -107,7 +107,7 @@ export default function Footer() {
         },
         {
             header: "Contact Us",
-            data: ["(+84)38-277-6645", "tinkerbellgarden@gmail.com", "First Street Dai Co Viet"],
+            data: ["(+84)913227645", "tinkerbellgarden@gmail.com", "First Street Dai Co Viet"],
             icons: [
                 <CallIcon className="icon" key="1" />,
                 <AlternateEmailIcon className="icon" key="2" />,

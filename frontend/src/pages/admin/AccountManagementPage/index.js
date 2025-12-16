@@ -17,6 +17,7 @@ import WrapperAdmin from "src/pages/admin/WrapperAdmin";
 import { styled, alpha, useTheme } from "@mui/system";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllAccount, selectAccounts } from "src/redux/slices/listAccountSlice";
+import { selectRole } from "src/redux/slices/auth-slice";
 import { css } from "@emotion/react";
 import FadeLoader from "react-spinners/FadeLoader";
 import CreateNewButton from "./CreateNewButton";
@@ -24,6 +25,7 @@ import EditButton from "./EditButton";
 import DeleteButton from "./DeleteButton";
 import Helmet from "react-helmet";
 import VIPManagement from "./VIPManagement.js";
+import { useNavigate } from "react-router-dom";
 
 const CustomClass = styled(Box)((theme) => ({
     ".wrapper": {
@@ -108,7 +110,9 @@ const CellBody = styled(TableCell)((theme) => ({
 
 const AccountManagementPage = () => {
     const accounts = useSelector((state) => selectAccounts(state));
+    const role = useSelector((state) => selectRole(state));
     const dp = useDispatch();
+    const navigate = useNavigate();
     const [loadingDelete, setLoadingDelete] = useState([]);
     const theme = useTheme();
     const [searchUsername, setSearchUsername] = useState("");
@@ -121,6 +125,12 @@ const AccountManagementPage = () => {
     async function init() {
         await Promise.all([dp(fetchAllAccount())]);
     }
+
+    useEffect(() => {
+        if (role && role !== "admin" && role !== "staff") {
+            navigate("/");
+        }
+    }, [role, navigate]);
 
     return (
         <WrapperAdmin>
@@ -170,6 +180,7 @@ const AccountManagementPage = () => {
                             </TableHead>
                             <TableBody>
                                 {accounts.map((detail, index) => {
+                                    if (!detail || !detail.loginName) return null;
                                     if (
                                         detail.loginName.toLowerCase().includes(searchUsername.toLowerCase()) ||
                                         searchUsername == ""

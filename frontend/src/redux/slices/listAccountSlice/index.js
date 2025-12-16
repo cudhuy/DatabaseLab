@@ -6,14 +6,12 @@ const client = Axios.create({
 });
 
 export const fetchAllAccount = createAsyncThunk("listAccountSlice/fetchAllAccount", async (_, thunkAPI) => {
-    await Promise.all(thunkAPI.dispatch(fetchAllNormalAccount()), thunkAPI.dispatch(fetchAllVIPAccount()));
+    await Promise.all([thunkAPI.dispatch(fetchAllNormalAccount()), thunkAPI.dispatch(fetchAllVIPAccount())]);
 });
 
 export const fetchAllVIPAccount = createAsyncThunk("listAccountSlice/fetchAllVIPAccount", async (_, thunkAPI) => {
-    const token = thunkAPI.getState().authSlice.accountData.token;
-    const config = {
-        headers: { Authorization: `Bearer ${token}` },
-    };
+    const token = thunkAPI.getState().authSlice?.accountData?.token || localStorage.getItem("token");
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
     const accountList = await client.get("/api/v1/vip", config);
     return accountList.data.map((d) => ({
         name: d.name,
@@ -27,56 +25,54 @@ export const fetchAllVIPAccount = createAsyncThunk("listAccountSlice/fetchAllVIP
 });
 
 export const fetchAllNormalAccount = createAsyncThunk("listAccountSlice/fetchAllNormalAccount", async (_, thunkAPI) => {
-    const token = thunkAPI.getState().authSlice.accountData.token;
-    const config = {
-        headers: { Authorization: `Bearer ${token}` },
-    };
+    const token = thunkAPI.getState().authSlice?.accountData?.token || localStorage.getItem("token");
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
     const accountList = await client.get("/api/v1/users", config);
     console.log(accountList);
     return accountList.data.map((account) => ({
-        loginName: account.loginName,
+        loginName: account.loginName || account.loginname,
         role: account.role,
         id: account.id,
     }));
 });
 
 export const createNewUser = createAsyncThunk("listAccountSlice/createNewUser", async ({ user }, thunkAPI) => {
-    const token = thunkAPI.getState().authSlice.accountData.token;
-    const config = {
-        headers: { Authorization: `Bearer ${token}` },
-    };
+    const token = thunkAPI.getState().authSlice?.accountData?.token || localStorage.getItem("token");
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
     const response = await client.post("/api/v1/users", user, config);
     return response;
 });
 
 export const deleteUser = createAsyncThunk("listAccountSlice/deleteUser", async (id, thunkAPI) => {
-    const token = thunkAPI.getState().authSlice.accountData.token;
-    const config = {
-        headers: { Authorization: `Bearer ${token}` },
-    };
+    const token = thunkAPI.getState().authSlice?.accountData?.token || localStorage.getItem("token");
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
     console.log(id);
     const response = await client.delete(`/api/v1/users/${id}`, config);
     return response;
 });
 
 export const deleteVIPUser = createAsyncThunk("listAccountSlice/deleteVIPUser", async (uuid, thunkAPI) => {
-    const token = thunkAPI.getState().authSlice.accountData.token;
-    const config = {
-        headers: { Authorization: `Bearer ${token}` },
-    };
+    const token = thunkAPI.getState().authSlice?.accountData?.token || localStorage.getItem("token");
+    const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
     const response = await client.post("/api/v1/vip/delete", { listUuid: [uuid] }, config);
     return response;
 });
 
+export const createVIPAccount = createAsyncThunk(
+    "listAccountSlice/createVIPAccount",
+    async ({ name, email, phone }, thunkAPI) => {
+        const token = thunkAPI.getState().authSlice?.accountData?.token || localStorage.getItem("token");
+        const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
+        const response = await client.post("/api/v1/vip", { name, email, phone }, config);
+        return response.data;
+    }
+);
+
 export const editUser = createAsyncThunk(
     "listAccountSlice/createNewUser",
     async ({ id, password, adminPassword, adminName }, thunkAPI) => {
-        const token = thunkAPI.getState().authSlice.accountData.token;
-        const config = {
-            headers: {
-                Authorization: `Bearer ${token}`,
-            },
-        };
+        const token = thunkAPI.getState().authSlice?.accountData?.token || localStorage.getItem("token");
+        const config = token ? { headers: { Authorization: `Bearer ${token}` } } : {};
         const body = { adminPassword, adminName, password };
         console.log(body);
         const response = await client.patch(`/api/v1/users/${id}`, body, config);

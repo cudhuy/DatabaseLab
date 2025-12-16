@@ -10,6 +10,12 @@ const CustomClass = styled(Box)((theme) => ({
         alignItems: "center",
         flexDirection: "column",
     },
+    ".thumb": {
+        width: "80%",
+        aspectRatio: "3 / 2",
+        objectFit: "cover",
+        borderRadius: "8px",
+    },
     ".title": {
         fontSize: "larger",
         color: theme.theme.palette.commonText.black,
@@ -42,7 +48,7 @@ const Item = ({ data }) => {
     return (
         <CustomClass>
             <Box className="wrapper" onClick={showData}>
-                <img width="80%" src={data?.url} />
+                <img className="thumb" src={data?.url} />
                 <Box py={1}></Box>
                 <Typography className="title">{data.title}</Typography>
             </Box>
@@ -67,7 +73,10 @@ const Item = ({ data }) => {
                 <DialogContent className="dialogContainer">
                     <Grid container spacing={2}>
                         <Grid item xs={12} md={6}>
-                            <img src={data?.url} style={{ maxWidth: "100%" }} />
+                            <img
+                                src={data?.url}
+                                style={{ width: "100%", aspectRatio: "3 / 2", objectFit: "cover", borderRadius: "8px" }}
+                            />
                         </Grid>
                         <Grid
                             item

@@ -25,7 +25,7 @@ const ContactPage = () => {
                         <Box marginTop={5}></Box>
                         <Box>
                             <Box>Email : tinkerbellgarden@gmail.com</Box>
-                            <Box>Phone : (+84)38-277-6645</Box>
+                            <Box>Phone : (+84)913227645</Box>
                         </Box>
                         <Box marginTop={5}></Box>
                         <Box>

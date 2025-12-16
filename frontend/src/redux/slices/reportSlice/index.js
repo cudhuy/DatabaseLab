@@ -64,6 +64,8 @@ export const createNewReport = createAsyncThunk(
             const response = await client.post("/api/v1/maintainance", uploadData, config);
             console.log(response);
             eq("Create new report successfully", SUCCESS_TOP_CENTER);
+            const games = thunkAPI.getState().gameSlice?.data || [];
+            const gameMatch = games.find((g) => g._id == gameId);
             return {
                 title: response.data?.title,
                 gameId: response.data?.gameId,
@@ -72,6 +74,7 @@ export const createNewReport = createAsyncThunk(
                 state: response.data?.status,
                 date: response.data?.date,
                 id: response.data._id,
+                type: gameMatch ? gameMatch.type : undefined,
             };
         } catch (err) {
             console.log(err);

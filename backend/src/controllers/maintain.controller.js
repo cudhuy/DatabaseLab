@@ -65,14 +65,10 @@ const createMaintainace = async (req, res, next) => {
         return next(err);
       }
       await pool.query("INSERT INTO Images(url,cloudinaryId) VALUES ($1,$2)", [result.secure_url, result.public_id]);
-      await pool.query("INSERT INTO Maintainance(gameId,description,status,date,title,imageId) VALUES($1,$2,$3,$4,$5)", [
-        req.body.gameId,
-        req.body.description || "no description",
-        req.body.status || 0,
-        date,
-        req.body.title,
-        result.public_id,
-      ]);
+      await pool.query(
+        "INSERT INTO Maintainance(gameId,description,status,date,title,imageId) VALUES($1,$2,$3,$4,$5,$6)",
+        [req.body.gameId, req.body.description || "no description", req.body.status || 0, date, req.body.title, result.public_id]
+      );
       const lastMaintain = await pool.query("SELECT * from Maintainance Order by _id DESC LIMIT 1");
       res.status(200).json({ ...lastMaintain.rows[0], image: { url: result.secure_url } });
     }

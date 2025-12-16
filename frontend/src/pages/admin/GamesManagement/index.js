@@ -238,7 +238,11 @@ const GamesManagement = () => {
                                     onChange={onImageChange}
                                 />
                                 <label htmlFor="raised-button-file">
-                                    <img width="100%" src={image} alt="" />
+                                    <img
+                                        src={image}
+                                        alt=""
+                                        style={{ width: "100%", aspectRatio: "3 / 2", objectFit: "cover" }}
+                                    />
                                 </label>
                             </Grid>
                             <Grid item xs={12} md={6}>

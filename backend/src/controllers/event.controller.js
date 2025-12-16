@@ -103,20 +103,21 @@ const updateEvent = async (req, res, next) => {
         return next(err);
       }
       const eventCheck = await pool.query(
-        `SELECT * FROM RunningEvent where 
-    (
-      startTime <= CAST($1 AS timestamp) AND
-      endTime >= CAST($2 AS timestamp)
-    ) OR 
-    (
-      startTime <= CAST($3 AS timestamp) AND
-      endTime >= CAST($3 AS timestamp) 
-    )
-    OR 
-    (
-      startTime <= CAST($1 AS timestamp) AND
-      endTime >= CAST($1 AS timestamp)
-    )`,
+        `SELECT * FROM RunningEvent 
+         WHERE isStop = false AND (
+            (
+              startTime <= CAST($1 AS timestamp) AND
+              endTime   >= CAST($2 AS timestamp)
+            ) OR 
+            (
+              startTime <= CAST($3 AS timestamp) AND
+              endTime   >= CAST($3 AS timestamp) 
+            ) OR 
+            (
+              startTime <= CAST($1 AS timestamp) AND
+              endTime   >= CAST($1 AS timestamp)
+            )
+         )`,
         [req.body.meta.startTime, req.body.meta.endTime, req.body.meta.endTime]
       );
 

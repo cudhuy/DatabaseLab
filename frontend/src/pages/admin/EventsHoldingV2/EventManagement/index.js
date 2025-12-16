@@ -20,6 +20,12 @@ const CustomClass = styled(Box)((theme) => ({
         textAlign: "center",
         fontWeight: "bold",
     },
+    ".eventImage": {
+        width: "80%",
+        aspectRatio: "3 / 2",
+        objectFit: "cover",
+        borderRadius: "8px",
+    },
 }));
 
 const EventItem = ({ event }) => {
@@ -37,7 +43,7 @@ const EventItem = ({ event }) => {
             <Box className="wrapper">
                 <Typography className="titleItem">{event?.title}</Typography>
                 <Box py={1}></Box>
-                <img width="80%" src={event?.image} />
+                <img className="eventImage" src={event?.image} />
                 <Box py={1}></Box>
                 <Box>
                     <ButtonStartEvent event={event} /> <EditButton event={event} />{" "}

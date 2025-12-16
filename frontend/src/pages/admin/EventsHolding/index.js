@@ -121,12 +121,11 @@ const EventsPage = () => {
                                             onChange={onImageChange}
                                         />
                                         <label htmlFor="raised-button-file">
-                                            <Box style={{ width: "299px", height: "300px" }}>
+                                            <Box style={{ width: "299px" }}>
                                                 <img
-                                                    width="100%"
-                                                    height="100%"
-                                                    style={{ borderRadius: "15px" }}
                                                     src={image}
+                                                    style={{ width: "100%", aspectRatio: "1 / 1", objectFit: "cover", borderRadius: "15px" }}
+                                                    alt=""
                                                 />
                                             </Box>
                                         </label>

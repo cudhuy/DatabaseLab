@@ -44,6 +44,12 @@ const CustomClass = styled(Box)((theme) => ({
         fontFamily: "Roboto !important",
         fontWeight: "lighter !important",
     },
+    ".gameImage": {
+        width: "80%",
+        aspectRatio: "3 / 2",
+        objectFit: "cover",
+        borderRadius: "6px",
+    },
 }));
 
 const Item = ({ data }) => {
@@ -105,7 +111,7 @@ const Item = ({ data }) => {
             <Box className="wrapper">
                 <Typography className="titleItem">{data?.title}</Typography>
                 <Box py={1}></Box>
-                <img width="80%" src={data?.url} />
+                <img className="gameImage" src={data?.url} />
                 <Box py={1}></Box>
                 <Box>
                     <Button variant="contained" onClick={openEditDialog} disabled={loadingEdit || loadingDelete}>
@@ -170,7 +176,11 @@ const Item = ({ data }) => {
                                     onChange={onImageChange}
                                 />
                                 <label htmlFor="raised-button-file">
-                                    <img width="100%" src={image} alt="" />
+                                    <img
+                                        src={image}
+                                        alt=""
+                                        style={{ width: "100%", aspectRatio: "3 / 2", objectFit: "cover" }}
+                                    />
                                 </label>
                             </Grid>
                             <Grid item xs={12} md={6}>

@@ -26,7 +26,11 @@ const EventDisplay = (props) => {
             <Paper elevation={0} className="paper">
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={7}>
-                        <img width="100%" style={{ borderRadius: "15px" }} src={event?.url} />
+                        <img
+                            src={event?.url}
+                            alt={event?.title}
+                            style={{ maxWidth: "50%", height: "auto", borderRadius: "15px", objectFit: "contain" }}
+                        />
                     </Grid>
                     <Grid
                         item

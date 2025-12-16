@@ -16,6 +16,12 @@ const CustomClass = styled(Box)((theme) => ({
         margin: "0 auto",
         borderRadius: "20px",
     },
+    ".eventImage": {
+        width: "100%",
+        aspectRatio: "3 / 2",
+        objectFit: "cover",
+        borderRadius: "15px",
+    },
 }));
 
 const EventOccuringDisplay = ({ event }) => {
@@ -41,7 +47,7 @@ const EventOccuringDisplay = ({ event }) => {
             <Paper elevation={0} className="paper">
                 <Grid container spacing={3}>
                     <Grid item xs={12} md={5}>
-                        <img width="100%" style={{ borderRadius: "15px" }} src={event?.image} />
+                        <img className="eventImage" src={event?.image} />
                     </Grid>
                     <Grid
                         item

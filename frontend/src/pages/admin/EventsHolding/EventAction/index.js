@@ -119,8 +119,12 @@ const EventAction = () => {
                                         onChange={onImageChange}
                                     />
                                     <label htmlFor="raised-button-file">
-                                        <Box style={{ width: "299px", height: "300px" }}>
-                                            <img width="100%" style={{ borderRadius: "15px" }} src={image} />
+                                        <Box style={{ width: "299px" }}>
+                                            <img
+                                                src={image}
+                                                style={{ width: "100%", aspectRatio: "3 / 2", objectFit: "cover", borderRadius: "15px" }}
+                                                alt=""
+                                            />
                                         </Box>
                                     </label>
                                 </Grid>
