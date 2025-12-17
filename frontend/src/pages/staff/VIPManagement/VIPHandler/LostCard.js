@@ -76,7 +76,7 @@ const LostCard = () => {
                             fullWidth
                             size="small"
                             type="email"
-                            placeholder="hieucuopbien123@gmail.com"
+                            placeholder="@gmail.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -86,7 +86,7 @@ const LostCard = () => {
                             fullWidth
                             type="text"
                             size="small"
-                            placeholder="0382776646"
+                            placeholder="0987654321"
                             value={phone}
                             onChange={(e) => phoneChange(e)}
                         />

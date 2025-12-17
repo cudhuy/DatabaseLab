@@ -33,7 +33,7 @@ export const fetchReport = createAsyncThunk("reportSlice/fetchReport", async (pa
         return res.docs.map((item) => {
             return {
                 title: item?.title,
-                gameId: item?.gameId,
+                gameId: item?.gameId || item?.gameid,
                 description: item?.description,
                 image: item?.url,
                 state: item?.status,
@@ -68,7 +68,7 @@ export const createNewReport = createAsyncThunk(
             const gameMatch = games.find((g) => g._id == gameId);
             return {
                 title: response.data?.title,
-                gameId: response.data?.gameId,
+                gameId: response.data?.gameId || gameId,
                 description: response.data?.description,
                 image: response.data?.image?.url,
                 state: response.data?.status,

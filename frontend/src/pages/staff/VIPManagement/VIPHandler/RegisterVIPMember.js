@@ -113,7 +113,7 @@ const RegisterVIPMember = () => {
                                 size="small"
                                 type="email"
                                 value={email}
-                                placeholder="hieucuopbien123@gmail.com"
+                                placeholder="@gmail.com"
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                             <label htmlFor="regisPhone">Phone Number: </label>
@@ -122,7 +122,7 @@ const RegisterVIPMember = () => {
                                 fullWidth
                                 type="text"
                                 size="small"
-                                placeholder="0382776646"
+                                placeholder="0987654321"
                                 value={phone}
                                 helperText="This phone number'll be used for username login"
                                 onChange={(e) => phoneChange(e)}
