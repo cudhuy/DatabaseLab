@@ -118,12 +118,17 @@ const createVip = async (req, res, next) => {
       [req.body.email, req.body.name, vipCode, req.body.phone, 1000, dateEnd, _id, userId, qr_result.public_id]
     );
     const data = { to: req.body.email, subject: "Here is your VIP information" };
-    await emailService.sendEjsMail({
-      template: "mailinfovip",
-      templateVars: { code: vipCode, qr: qr_result.secure_url, name: req.body.name, password: randomPassWord },
-      ...data,
-    });
-    res.status(200).json({ vipCode });
+    let emailSent = true;
+    try {
+      await emailService.sendEjsMail({
+        template: "mailinfovip",
+        templateVars: { code: vipCode, qr: qr_result.secure_url, name: req.body.name, password: randomPassWord },
+        ...data,
+      });
+    } catch (err) {
+      emailSent = false;
+    }
+    res.status(200).json({ vipCode, emailSent });
   } catch (err) {
     const e = new Error("Cannot create");
     e.statusCode = 400;
