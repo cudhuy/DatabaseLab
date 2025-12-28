@@ -144,6 +144,20 @@ export const fetchPrice = createAsyncThunk("ticketSlice/fetchPrice", async ({ id
     }
 });
 
+export const fetchPayQr = createAsyncThunk("ticketSlice/fetchPayQr", async ({ listId }, thunkAPI) => {
+    const token = thunkAPI.getState().authSlice.accountData.token;
+    const config = {
+        headers: { Authorization: `Bearer ${token}` },
+    };
+    try {
+        const response = await client.post("/api/v1/pay/mintQR", { listId }, config);
+        return response?.data || null;
+    } catch (err) {
+        console.log(err);
+        return null;
+    }
+});
+
 export const pay = createAsyncThunk("ticketSlice/pay", async ({ listId, eq }, thunkAPI) => {
     const token = thunkAPI.getState().authSlice.accountData.token;
     const config = {
@@ -182,6 +196,9 @@ const ticketSlice = createSlice({
             state.data = action.payload.tickList;
             state.totalCost = action.payload.totalCost;
             state.qrImage = action.payload.qrImage;
+        },
+        [fetchPayQr.fulfilled]: (state, action) => {
+            state.qrImage = action.payload;
         },
         [fetchPrice.rejected]: (state, action) => {
             console.log(action);

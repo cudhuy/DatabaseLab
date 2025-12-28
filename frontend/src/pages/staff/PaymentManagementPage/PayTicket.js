@@ -5,7 +5,7 @@ import { styled, useTheme } from "@mui/system";
 import { useSnackbar } from "notistack";
 import { WARNING_TOP_CENTER } from "src/utils/snackbar-utils";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchPrice, pay, resetTicketList, selectTicketSlice } from "src/redux/slices/ticketSlice";
+import { fetchPayQr, fetchPrice, pay, resetTicketList, selectTicketSlice } from "src/redux/slices/ticketSlice";
 import { BeatLoader } from "react-spinners";
 import { FormattedNumber, FormattedRelativeTime } from "react-intl";
 
@@ -49,6 +49,7 @@ const PayTicket = () => {
     const [min, setMin] = useState("");
     const [max, setMax] = useState("");
     const [loadingPay, setLoadingPay] = useState(false);
+    const [showQr, setShowQr] = useState(false);
     const { enqueueSnackbar: eq } = useSnackbar();
     const ticketList = useSelector((state) => selectTicketSlice(state).data);
     const imgGameData = useSelector((state) => state.gameSlice.data);
@@ -148,6 +149,20 @@ const PayTicket = () => {
         setMin("");
         setMax("");
         setId("");
+        setShowQr(false);
+    };
+    const toggleQr = async () => {
+        if (!showQr) {
+            const idListCheck = ticketList.map((ticket) => ticket.ticketId);
+            if (idListCheck.length === 0) {
+                eq("Please get ticket price first!", WARNING_TOP_CENTER);
+                return;
+            }
+            await dp(fetchPayQr({ listId: idListCheck }));
+            setShowQr(true);
+            return;
+        }
+        setShowQr(false);
     };
     const theme = useTheme();
     return (
@@ -204,9 +219,11 @@ const PayTicket = () => {
                             <Box py={1}></Box>
                         </Box>
                     </Box>
-                    <Box style={{ textAlign: "center" }}>
-                        <img src={qrImage} />
-                    </Box>
+                    {showQr ? (
+                        <Box style={{ textAlign: "center" }}>
+                            <img src={qrImage} />
+                        </Box>
+                    ) : null}
                     {ticketList.length > 0 ? (
                         <Fragment>
                             <hr />
@@ -214,6 +231,10 @@ const PayTicket = () => {
                             <Box>
                                 <Button variant="contained" onClick={handlePay} disabled={loadingPay}>
                                     {loadingPay ? <BeatLoader color="#fff" size={8} /> : "Pay"}
+                                </Button>
+                                &nbsp;
+                                <Button variant="outlined" onClick={toggleQr} disabled={loadingPay}>
+                                    {showQr ? "Hide QR" : "Pay by QR"}
                                 </Button>
                                 &nbsp;
                                 <Button variant="contained" onClick={() => clearList()}>
