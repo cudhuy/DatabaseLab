@@ -254,20 +254,7 @@ const eventSliceV2 = createSlice({
         // },
         [deleteRunningEvent.fulfilled]: (state, action) => {
             if (action.payload?.id) {
-                state.event = state.event.map((ele) => {
-                    if (ele.id != action.payload.id) {
-                        return ele;
-                    }
-                    return {
-                        ...ele,
-                        startBookingTime: null,
-                        endBookingTime: null,
-                        startTime: null,
-                        endTime: null,
-                        isStop: null,
-                        isDeleted: true,
-                    };
-                });
+                state.event = state.event.filter((ele) => ele.id !== action.payload.id);
             }
         },
         [stopEvent.fulfilled]: (state, action) => {

@@ -29,7 +29,7 @@ const EventsHoldingV2 = () => {
                 <Fragment>
                     <Typography className={"titleEventOccuring"}>Ocurring Events</Typography>
                     {runningEvent.map((event) => (
-                        <Box key={event._id}>
+                        <Box key={event.id ?? event._id}>
                             <EventOccuringDisplay event={event} />
                             <Box py={1}></Box>
                         </Box>
@@ -47,7 +47,7 @@ const EventsHoldingV2 = () => {
             <Box py={1}></Box>
             <Grid container spacing={3}>
                 {allEvent.map((event) => (
-                    <Grid item key={event._id} xs={12} md={6}>
+                    <Grid item key={event.id ?? event._id} xs={12} md={6}>
                         <EventManagement event={event} />
                     </Grid>
                 ))}
