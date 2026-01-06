@@ -128,6 +128,8 @@ export default function Header() {
             setNavConfig(adminNavConfig);
         } else if (role == "staff") {
             setNavConfig(staffNavConfig);
+        } else if (role == "vip" || role == "customer") {
+            setNavConfig(navigationConfig.filter((item) => item.id !== "vip"));
         } else {
             setNavConfig(navigationConfig);
         }
