@@ -54,7 +54,9 @@ const createNewEvent = async (req, res, next) => {
       }
       await pool.query("INSERT INTO IMAGES(url,cloudinaryId) VALUES($1,$2)", [result.secure_url, result.public_id]);
       let discount = 0;
-      if (!req.body.discount) discount = req.body.discount;
+      if (req.body.discount !== undefined && req.body.discount !== null && req.body.discount !== "") {
+        discount = req.body.discount;
+      }
       createBody = {
         title: req.body.title ? req.body.title : "Untitled",
         description: req.body.description ? req.body.description : "No description",

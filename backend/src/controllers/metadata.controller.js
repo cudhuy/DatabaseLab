@@ -93,11 +93,11 @@ const getVipMetaData = async (req, res, next) => {
 const getTicketStatistic = async (req, res, next) => {
   try {
     const listPeriod = [];
-    for (let i = 34; i >= 0; i -= 1) {
+    for (let i = 35; i >= 0; i -= 1) {
       listPeriod.push(Date.now() - i * 60 * 60 * 1000 * 24);
     }
     const listPromises = [];
-    for (let i = 0; i < 35; i += 1) {
+    for (let i = 0; i < listPeriod.length - 1; i += 1) {
       const up = new Date(listPeriod[i + 1]).toJSON();
       const down = new Date(listPeriod[i]).toJSON();
       listPromises.push(
@@ -108,7 +108,7 @@ const getTicketStatistic = async (req, res, next) => {
       );
     }
     const ticket = await Promise.all(listPromises);
-    const fakeList = listPeriod.map(el => el - 60 * 60 * 1000).slice(0, 35);
+    const fakeList = listPeriod.map(el => el - 60 * 60 * 1000).slice(0, listPeriod.length - 1);
     const result = {};
     fakeList.forEach((element, index) => {
       result[element] = ticket[index].rows;
